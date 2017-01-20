@@ -95,6 +95,11 @@ public class QuickContactFragment extends DialogFragment {
 		}
 
 		@Override
+		public int[] getPageIconResIds(int position){
+			return new int[0];
+		}
+
+		@Override
 		public int getPageIconResId(int position) {
 			return ICONS[position];
 		}

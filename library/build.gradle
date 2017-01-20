@@ -1,18 +1,19 @@
-apply plugin: 'android-library'
+apply plugin: 'com.android.library'
 
 dependencies {
-    compile 'com.android.support:support-v4:19.0.0'
+    compile 'com.android.support:support-annotations:25.1.0'
+    compile 'com.android.support:support-v4:25.1.0'
 }
 
 android {
+    signingConfigs {
+    }
     compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
-
     defaultConfig {
-        minSdkVersion 8
+        minSdkVersion 17
         targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
     }
-
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -20,6 +21,9 @@ android {
             res.srcDirs = ['res']
         }
     }
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_7
+//    }
 }
 
-apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
+//apply from: 'https://raw.githubusercontent.com/ZuYun/Adhere2-learn/master/config.gradle'
