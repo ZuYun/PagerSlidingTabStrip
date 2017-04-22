@@ -3,6 +3,7 @@ package april.yun.other;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
@@ -12,6 +13,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import april.yun.ISlidingTabStrip;
 import april.yun.tabstyle.JTabStyle;
+import com.astuetz.pagerslidingtabstrip.R;
 
 import static april.yun.other.JTabStyleBuilder.STYLE_DEFAULT;
 
@@ -41,6 +43,9 @@ public class JTabStyleDelegate {
     private int dividerColor = 0;
     //边框颜色
     private int mFrameColor = Color.TRANSPARENT;
+    // @formatter:off
+    private static final int[] ATTRS = new int[]{android.R.attr.textSize, android.R.attr.textColor};
+
 
     private boolean shouldExpand = false;
     private boolean textAllCaps = false;
@@ -56,9 +61,10 @@ public class JTabStyleDelegate {
     private Typeface tabTypeface = null;
     private int tabTypefaceStyle = Typeface.NORMAL;
     private int mTabStyle = STYLE_DEFAULT;
+    private JTabStyle mJTabStyle;
 
 
-    public JTabStyleDelegate obtainAttrs(ISlidingTabStrip tabStrip, AttributeSet attrs, int defStyle) {
+    public JTabStyleDelegate obtainAttrs(ISlidingTabStrip tabStrip, AttributeSet attrs, Context context) {
         mTabStrip = tabStrip;
         DisplayMetrics dm = Resources.getSystem().getDisplayMetrics();
         scrollOffset = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, scrollOffset, dm);
@@ -71,30 +77,34 @@ public class JTabStyleDelegate {
 
         // get system attrs (android:textSize and android:textColor)
 
-        //		TypedArray a = context.obtainStyledAttributes(attrs, ATTRS);
-        //
-        //		tabTextSize = a.getDimensionPixelSize(0, tabTextSize);
-        //		tabTextColor = a.getColor(1, tabTextColor);
-        //
-        //		a.recycle();
-        //
-        //		// get custom attrs
-        //
-        //		a = context.obtainStyledAttributes(attrs, R.styleable.PagerSlidingTabStrip);
-        //
-        //		indicatorColor = a.getColor(R.styleable.PagerSlidingTabStrip_pstsIndicatorColor, indicatorColor);
-        //		underlineColor = a.getColor(R.styleable.PagerSlidingTabStrip_pstsUnderlineColor, underlineColor);
-        //		dividerColor = a.getColor(R.styleable.PagerSlidingTabStrip_pstsDividerColor, dividerColor);
-        //		indicatorHeight = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsIndicatorHeight, indicatorHeight);
-        //		underlineHeight = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsUnderlineHeight, underlineHeight);
-        //		dividerPadding = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsDividerPadding, dividerPadding);
-        //		tabPadding = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsTabPaddingLeftRight, tabPadding);
-        //		tabBackgroundResId = a.getResourceId(R.styleable.PagerSlidingTabStrip_pstsTabBackground, tabBackgroundResId);
-        //		shouldExpand = a.getBoolean(R.styleable.PagerSlidingTabStrip_pstsShouldExpand, shouldExpand);
-        //		scrollOffset = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsScrollOffset, scrollOffset);
-        //		textAllCaps = a.getBoolean(R.styleable.PagerSlidingTabStrip_pstsTextAllCaps, textAllCaps);
-        //
-        //		a.recycle();
+        TypedArray a = context.obtainStyledAttributes(attrs, ATTRS);
+
+        tabTextSize = a.getDimensionPixelSize(0, tabTextSize);
+        tabTextColor = a.getColor(1, tabTextColor);
+
+        a.recycle();
+
+        // get custom attrs
+
+        a = context.obtainStyledAttributes(attrs, R.styleable.PagerSlidingTabStrip);
+
+        indicatorColor = a.getColor(R.styleable.PagerSlidingTabStrip_pstsIndicatorColor, indicatorColor);
+        underlineColor = a.getColor(R.styleable.PagerSlidingTabStrip_pstsUnderlineColor, underlineColor);
+        dividerColor = a.getColor(R.styleable.PagerSlidingTabStrip_pstsDividerColor, dividerColor);
+        indicatorHeight = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsIndicatorHeight,
+                indicatorHeight);
+        underlineHeight = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsUnderlineHeight,
+                underlineHeight);
+        dividerPadding = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsDividerPadding,
+                dividerPadding);
+        tabPadding = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsTabPaddingLeftRight,
+                tabPadding);
+        shouldExpand = a.getBoolean(R.styleable.PagerSlidingTabStrip_pstsShouldExpand, shouldExpand);
+        scrollOffset = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsScrollOffset,
+                scrollOffset);
+        textAllCaps = a.getBoolean(R.styleable.PagerSlidingTabStrip_pstsTextAllCaps, textAllCaps);
+
+        a.recycle();
 
         return this;
     }
@@ -110,8 +120,21 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setTabTextColorStateList(ColorStateList tabTextColorStateList) {
+    public JTabStyleDelegate setTabTextColorStateList(ColorStateList tabTextColorStateList) {
         mTabTextColorStateList = tabTextColorStateList;
+        return this;
+    }
+    public JTabStyleDelegate setTabTextColor(ColorStateList tabTextColorStateList) {
+        mTabTextColorStateList = tabTextColorStateList;
+        return this;
+    }
+
+    private ColorStateList getColorStateList(int... colots) {
+        int[][] states = new int[2][];
+        states[0] = new int[] { android.R.attr.state_checked};
+        states[1] = new int[] {};
+        ColorStateList colorStateList = new ColorStateList(states,colots);
+        return colorStateList;
     }
 
 
@@ -130,8 +153,9 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setIndicatorColor(int indicatorColor) {
+    public JTabStyleDelegate setIndicatorColor(int indicatorColor) {
         this.indicatorColor = indicatorColor;
+        return this;
     }
 
 
@@ -140,8 +164,9 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setUnderlineColor(int underlineColor) {
+    public JTabStyleDelegate setUnderlineColor(int underlineColor) {
         this.underlineColor = underlineColor;
+        return this;
     }
 
 
@@ -150,8 +175,9 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setDividerColor(int dividerColor) {
+    public JTabStyleDelegate setDividerColor(int dividerColor) {
         this.dividerColor = dividerColor;
+        return this;
     }
 
 
@@ -160,8 +186,9 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setShouldExpand(boolean shouldExpand) {
+    public JTabStyleDelegate setShouldExpand(boolean shouldExpand) {
         this.shouldExpand = shouldExpand;
+        return this;
     }
 
 
@@ -170,13 +197,15 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setTextAllCaps(boolean textAllCaps) {
+    public JTabStyleDelegate setTextAllCaps(boolean textAllCaps) {
         this.textAllCaps = textAllCaps;
+        return this;
     }
 
 
-    public void setTextColorStateResource(Context context, int resId) {
+    public JTabStyleDelegate setTextColorStateResource(Context context, int resId) {
         mTabTextColorStateList = ContextCompat.getColorStateList(context, resId);
+        return this;
     }
 
 
@@ -185,8 +214,9 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setScrollOffset(int scrollOffset) {
+    public JTabStyleDelegate setScrollOffset(int scrollOffset) {
         this.scrollOffset = scrollOffset;
+        return this;
     }
 
 
@@ -195,8 +225,9 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setIndicatorHeight(int indicatorHeight) {
+    public JTabStyleDelegate setIndicatorHeight(int indicatorHeight) {
         this.indicatorHeight = indicatorHeight;
+        return this;
     }
 
 
@@ -205,8 +236,9 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setUnderlineHeight(int underlineHeight) {
+    public JTabStyleDelegate setUnderlineHeight(int underlineHeight) {
         this.underlineHeight = underlineHeight;
+        return this;
     }
 
 
@@ -215,8 +247,9 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setDividerPadding(int dividerPadding) {
+    public JTabStyleDelegate setDividerPadding(int dividerPadding) {
         this.dividerPadding = dividerPadding;
+        return this;
     }
 
 
@@ -225,8 +258,9 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setTabPadding(int tabPadding) {
+    public JTabStyleDelegate setTabPadding(int tabPadding) {
         this.tabPadding = tabPadding;
+        return this;
     }
 
 
@@ -235,8 +269,9 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setDividerWidth(int dividerWidth) {
+    public JTabStyleDelegate setDividerWidth(int dividerWidth) {
         this.dividerWidth = dividerWidth;
+        return this;
     }
 
 
@@ -245,8 +280,9 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setTabTextSize(int tabTextSize) {
+    public JTabStyleDelegate setTabTextSize(int tabTextSize) {
         this.tabTextSize = tabTextSize;
+        return this;
     }
 
 
@@ -255,8 +291,9 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setTabTextColor(int tabTextColor) {
+    public JTabStyleDelegate setTabTextColor(int tabTextColor) {
         this.tabTextColor = tabTextColor;
+        return this;
     }
 
 
@@ -265,8 +302,9 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setTabTypeface(Typeface tabTypeface) {
+    public JTabStyleDelegate setTabTypeface(Typeface tabTypeface) {
         this.tabTypeface = tabTypeface;
+        return this;
     }
 
 
@@ -275,13 +313,15 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setTabTypefaceStyle(int tabTypefaceStyle) {
+    public JTabStyleDelegate setTabTypefaceStyle(int tabTypefaceStyle) {
         this.tabTypefaceStyle = tabTypefaceStyle;
+        return this;
     }
 
 
-    public void setNotDrawIcon(boolean notDrawIcon) {
+    public JTabStyleDelegate setNotDrawIcon(boolean notDrawIcon) {
         mNotDrawIcon = notDrawIcon;
+        return this;
     }
 
 
@@ -290,19 +330,22 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setTabIconGravity(int tabIconGravity) {
+    public JTabStyleDelegate setTabIconGravity(int tabIconGravity) {
         mTabIconGravity = tabIconGravity;
+        return this;
     }
 
 
     public JTabStyleDelegate setJTabStyle(int tabStyle) {
         mTabStyle = tabStyle;
-        mTabStrip.setJTabStyle(JTabStyleBuilder.createJTabStyle(mTabStrip, mTabStyle));
+        mJTabStyle = JTabStyleBuilder.createJTabStyle(mTabStrip, mTabStyle);
+        mTabStrip.setJTabStyle(mJTabStyle);
         return this;
     }
 
 
     public JTabStyleDelegate setJTabStyle(JTabStyle tabStyle) {
+        mJTabStyle = tabStyle;
         mTabStrip.setJTabStyle(tabStyle);
         return this;
     }
@@ -313,13 +356,17 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setFrameColor(int frameColor) {
+    public JTabStyleDelegate setFrameColor(int frameColor) {
         mFrameColor = frameColor;
+        return this;
     }
 
 
     public JTabStyle getJTabStyle() {
-        return JTabStyleBuilder.createJTabStyle(mTabStrip, mTabStyle);
+        if (mJTabStyle == null) {
+            mJTabStyle = JTabStyleBuilder.createJTabStyle(mTabStrip, mTabStyle);
+        }
+        return mJTabStyle;
     }
 
 

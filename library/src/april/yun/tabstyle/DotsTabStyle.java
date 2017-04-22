@@ -6,6 +6,7 @@ import android.graphics.PointF;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import april.yun.ISlidingTabStrip;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,13 +40,14 @@ public class DotsTabStyle extends JTabStyle {
         mTabStyleDelegate.setShouldExpand(true);
         bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         bgPaint.setStyle(Paint.Style.FILL);
-        bgPaint.setColor(mTabStyleDelegate.getDividerColor());
 
         mIndicatorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        bgPaint.setStyle(Paint.Style.FILL);
+    }
+
+
+    @Override public void afterSetViewPager(LinearLayout tabsContainer) {
+        bgPaint.setColor(mTabStyleDelegate.getUnderlineColor());
         mIndicatorPaint.setColor(mTabStyleDelegate.getIndicatorColor());
-        mIndicatorPaint.setStrokeWidth(mTabStyleDelegate.getDividerWidth());
-        //dosRadio = mTabStyleDelegate.getDividerWidth();
     }
 
 
@@ -83,8 +85,7 @@ public class DotsTabStyle extends JTabStyle {
     }
 
 
-     protected void calcuteIndicatorLinePosition(ViewGroup tabsContainer, float currentPositionOffset, int
-             lastCheckedPosition) {
+    protected void calcuteIndicatorLinePosition(ViewGroup tabsContainer, float currentPositionOffset, int lastCheckedPosition) {
         // if there is an offset, start interpolating left and right coordinates between current and next tab
         if (currentPositionOffset > 0f &&
                 mTabStyleDelegate.getCurrentPosition() < fake_container.size() - 1) {
@@ -92,9 +93,13 @@ public class DotsTabStyle extends JTabStyle {
             mNextTab = fake_container.get(mTabStyleDelegate.getCurrentPosition() + 1);
             float nextTabLeft = mNextTab.x;
             float nextTabRight = mNextTab.y;
-            //moveStyle_normal(currentPositionOffset, nextTabLeft, nextTabRight);
-
-            moveStyle_sticky(currentPositionOffset, lastCheckedPosition, nextTabLeft, nextTabRight);
+            if (moveStyle == MOVESTYLE_DEFAULT) {
+                moveStyle_normal(currentPositionOffset, nextTabLeft, nextTabRight);
+            }
+            else {
+                moveStyle_sticky(currentPositionOffset, lastCheckedPosition, nextTabLeft, nextTabRight);
+            }
+            //moveStyle_sticky(currentPositionOffset, lastCheckedPosition, nextTabLeft, nextTabRight);
         }
     }
 

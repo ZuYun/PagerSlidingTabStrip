@@ -15,10 +15,15 @@ import com.jonas.acase.fragment.SuperAwesomeCardFragment;
 
 import static april.yun.other.JTabStyleBuilder.STYLE_DEFAULT;
 import static april.yun.other.JTabStyleBuilder.STYLE_DOTS;
+import static april.yun.other.JTabStyleBuilder.STYLE_GRADIENT;
 import static april.yun.other.JTabStyleBuilder.STYLE_ROUND;
+import static april.yun.tabstyle.JTabStyle.MOVESTYLE_DEFAULT;
 
 public class MainActivity extends FragmentActivity {
     private ISlidingTabStrip tabs_up;
+    private ISlidingTabStrip tabs_up1;
+    private ISlidingTabStrip tabs_up2;
+    private ISlidingTabStrip tabs_up3;
     private ISlidingTabStrip dots;
     private ISlidingTabStrip tabs_buttom;
     private ViewPager pager;
@@ -33,6 +38,10 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         tabs_up = (ISlidingTabStrip) findViewById(R.id.tabs);
+        tabs_up1 = (ISlidingTabStrip) findViewById(R.id.tabs_1);
+        tabs_up2 = (ISlidingTabStrip) findViewById(R.id.tabs_2);
+        tabs_up3 = (ISlidingTabStrip) findViewById(R.id.tabs_3);
+
         tabs_buttom = (ISlidingTabStrip) findViewById(R.id.tab_buttom);
         dots = (ISlidingTabStrip) findViewById(R.id.dots);
 
@@ -45,28 +54,41 @@ public class MainActivity extends FragmentActivity {
     private void setupTabStrips() {
 
         setupStrip(tabs_up.getTabStyleDelegate(), STYLE_ROUND);
+        setupStrip(tabs_up1.getTabStyleDelegate(), STYLE_DEFAULT);
+        setupStrip(tabs_up2.getTabStyleDelegate(), STYLE_DEFAULT);
+        setupStrip(tabs_up3.getTabStyleDelegate(), STYLE_GRADIENT);
         setupStrip(tabs_buttom.getTabStyleDelegate(), STYLE_DEFAULT);
         setupStrip(dots.getTabStyleDelegate(), STYLE_DOTS);
-        tabs_buttom.getTabStyleDelegate().setTabIconGravity(Gravity.TOP);
-        tabs_buttom.getTabStyleDelegate().setIndicatorHeight(0);
-        tabs_buttom.getTabStyleDelegate().setDividerColor(Color.TRANSPARENT);
+        tabs_buttom.getTabStyleDelegate()
+                   .setTabIconGravity(Gravity.TOP)
+                   .setIndicatorHeight(0)
+                   .setDividerColor(Color.TRANSPARENT);
         tabs_up.getTabStyleDelegate().setNotDrawIcon(true);
+        tabs_up1.getTabStyleDelegate().setNotDrawIcon(true);
+        tabs_up1.getTabStyleDelegate().getJTabStyle().moveStyle=MOVESTYLE_DEFAULT;
+
+        tabs_up2.getTabStyleDelegate().setNotDrawIcon(true)
+                .setFrameColor(Color.TRANSPARENT)
+                .setDividerColor(Color.TRANSPARENT)
+                .setIndicatorHeight(5);
+
+        tabs_up3.getTabStyleDelegate().setNotDrawIcon(true);
     }
 
 
     private void setupStrip(JTabStyleDelegate tabStyleDelegate, int type) {
-
-        tabStyleDelegate.setJTabStyle(type);
-        tabStyleDelegate.setShouldExpand(true);
-        tabStyleDelegate.setFrameColor(Color.parseColor("#FACDB9"));
-        tabStyleDelegate.setTabTextSize(getDimen(R.dimen.tabstrip_textsize));
-        //        tabStyleDelegate.setTextColor(Color.parseColor("#FB6522"));
-        tabStyleDelegate.setTextColorStateResource(getApplicationContext(), R.drawable.tabstripbg);
-        tabStyleDelegate.setDividerColor(Color.parseColor("#FACDB9"));
-        tabStyleDelegate.setDividerPadding(0);
-        tabStyleDelegate.setUnderlineColor(Color.TRANSPARENT);
-        tabStyleDelegate.setIndicatorColor(Color.parseColor("#FACDB9"));
-        tabStyleDelegate.setIndicatorHeight(getDimen(R.dimen.sug_event_tabheight));
+        tabStyleDelegate.setJTabStyle(type)
+                        .setShouldExpand(true)
+                        .setFrameColor(Color.parseColor("#45C01A"))
+                        .setTabTextSize(getDimen(R.dimen.tabstrip_textsize))
+                        //        .setTextColor(Color.parseColor("#FB6522"))
+                        .setTextColorStateResource(getApplicationContext(), R.drawable.tabstripbg)
+                        .setDividerColor(Color.parseColor("#45C01A"))
+                        .setDividerPadding(0)
+                        .setUnderlineColor(Color.parseColor("#3045C01A"))
+                        .setUnderlineHeight(0)
+                        .setIndicatorColor(Color.parseColor("#7045C01A"))
+                        .setIndicatorHeight(getDimen(R.dimen.sug_event_tabheight));
     }
 
 
@@ -85,9 +107,16 @@ public class MainActivity extends FragmentActivity {
         pager.setPageMargin(pageMargin);
 
         tabs_up.setViewPager(pager);
+        tabs_up1.setViewPager(pager);
+        tabs_up2.setViewPager(pager);
+        tabs_up2.setPromptNum(1,9).setPromptNum(0,10)
+                                   .setPromptNum(2,-9).setPromptNum(3,100);
+        tabs_up3.setViewPager(pager);
+        tabs_up3.setPromptNum(2,18);
         tabs_buttom.setViewPager(pager);
+        tabs_buttom.setPromptNum(1,9).setPromptNum(0,10)
+                   .setPromptNum(2,-9).setPromptNum(3,100);
         dots.setViewPager(pager);
-
     }
 
 
@@ -127,6 +156,7 @@ public class MainActivity extends FragmentActivity {
             return mSelectors[position % 4];
         }
     }
+
 
     private int getDimen(int dimen) {
         return (int) getResources().getDimension(dimen);

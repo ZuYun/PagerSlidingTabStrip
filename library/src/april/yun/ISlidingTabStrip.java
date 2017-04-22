@@ -15,6 +15,8 @@ import april.yun.tabstyle.JTabStyle;
  */
 public interface ISlidingTabStrip {
 
+    ISlidingTabStrip setPromptNum(int index, int num);
+
     public interface IconTabProvider {
         /**
          * 如果 返回 null 則調用getPageIconResId

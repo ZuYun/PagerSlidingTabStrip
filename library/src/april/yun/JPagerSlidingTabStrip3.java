@@ -24,6 +24,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import april.yun.other.JTabStyleDelegate;
+import april.yun.other.PromptView;
 import april.yun.other.SavedState;
 import april.yun.tabstyle.JTabStyle;
 import java.util.ArrayList;
@@ -79,16 +80,16 @@ public class JPagerSlidingTabStrip3 extends HorizontalScrollView implements ISli
         tabsContainer.setGravity(Gravity.CENTER_VERTICAL);
         tabsContainer.setOrientation(LinearLayout.HORIZONTAL);
         tabsContainer.setLayoutParams(new LinearLayout.LayoutParams(-1, -1));
-        LayoutParams layoutParams = new LayoutParams(-1,-2);
+        LayoutParams layoutParams = new LayoutParams(-1, -2);
         layoutParams.gravity = Gravity.CENTER_VERTICAL;
-        addView(tabsContainer,layoutParams);
+        addView(tabsContainer, layoutParams);
         defaultTabLayoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.MATCH_PARENT);
         expandedTabLayoutParams = new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1.0f);
         if (locale == null) {
             locale = getResources().getConfiguration().locale;
         }
-        mTabStyleDelegate = new JTabStyleDelegate().obtainAttrs(this, attrs, defStyle);
+        mTabStyleDelegate = new JTabStyleDelegate().obtainAttrs(this, attrs, getContext());
         mJTabStyle = mTabStyleDelegate.getJTabStyle();
     }
 
@@ -365,6 +366,14 @@ public class JPagerSlidingTabStrip3 extends HorizontalScrollView implements ISli
 
     public int getState() {
         return mState;
+    }
+
+
+    public ISlidingTabStrip setPromptNum(int index, int num) {
+        if (index < tabsContainer.getChildCount()) {
+            ((PromptView) tabsContainer.getChildAt(index)).setPromptNum(num);
+        }
+        return this;
     }
 
 

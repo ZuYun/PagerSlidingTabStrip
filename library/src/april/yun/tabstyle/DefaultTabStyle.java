@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import april.yun.ISlidingTabStrip;
 
 /**
@@ -21,11 +22,6 @@ public class DefaultTabStyle extends JTabStyle {
     private float mOutRadio = 0;
     private boolean mDragRight;
     private float mH;
-    //private View mCurrentTab;
-    //private View mNextTab;
-    //x:left  y:fight
-    //private PointF mLinePosition = new PointF(0, 0);
-    //private int mTabCounts;
     private View mLastTab;
 
 
@@ -35,32 +31,30 @@ public class DefaultTabStyle extends JTabStyle {
         rectPaint.setStyle(Paint.Style.FILL);
 
         dividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        dividerPaint.setAntiAlias(true);
-        dividerPaint.setStrokeWidth(mTabStyleDelegate.getDividerWidth());
     }
 
+    @Override public void afterSetViewPager(LinearLayout tabsContainer) {
+        dividerPaint.setStrokeWidth(mTabStyleDelegate.getDividerWidth());
+        rectPaint.setStyle(Paint.Style.STROKE);
+    }
 
     @Override public void onSizeChanged(int w, int h, int oldw, int oldh) {
-        float pading = dp2dip(0.5f);
+        float pading = dp2dip(padingOffect);
         mH = h - pading;
         mTabCounts = mTabStrip.getTabsContainer().getChildCount();
         mLastTab = mTabStrip.getTabsContainer().getChildAt(mTabCounts - 1);
-        //if (mTabStyleDelegate.getTabIconGravity() != Gravity.NO_GRAVITY) {
-        //    mTabStyleDelegate.setIndicatorHeight((int) mH);
-        //}
     }
 
 
     @Override
     public void onDraw(Canvas canvas, ViewGroup tabsContainer, float currentPositionOffset, int lastCheckedPosition) {
-
         if (mTabStyleDelegate.getFrameColor() != Color.TRANSPARENT) {
             //画边框
             rectPaint.setStyle(Paint.Style.STROKE);
             rectPaint.setColor(mTabStyleDelegate.getFrameColor());
             rectPaint.setStrokeWidth(dp2dip(1));
 
-            canvas.drawRoundRect(dp2dip(0.5f), dp2dip(0.5f), mLastTab.getRight(), this.mH, mOutRadio,
+            canvas.drawRoundRect(dp2dip(padingOffect), dp2dip(padingOffect), mLastTab.getRight()-dp2dip(padingOffect), this.mH, mOutRadio,
                     mOutRadio, rectPaint);
         }
 
@@ -78,11 +72,12 @@ public class DefaultTabStyle extends JTabStyle {
             canvas.drawRoundRect(mLinePosition.x, mH - mTabStyleDelegate.getIndicatorHeight(),
                     mLinePosition.y, mH, mOutRadio, mOutRadio, rectPaint);
         }
-
-        // draw underline
-        rectPaint.setColor(mTabStyleDelegate.getUnderlineColor());
-        canvas.drawRect(0, mH - mTabStyleDelegate.getUnderlineColor(), tabsContainer.getWidth(), mH,
-                rectPaint);
+        if (mTabStyleDelegate.getUnderlineColor() != Color.TRANSPARENT) {
+            // draw underline
+            rectPaint.setColor(mTabStyleDelegate.getUnderlineColor());
+            canvas.drawRect(0, mH - mTabStyleDelegate.getUnderlineHeight(), tabsContainer.getWidth(), mH,
+                    rectPaint);
+        }
         if (mTabStyleDelegate.getDividerColor() != Color.TRANSPARENT) {
             // draw divider
             dividerPaint.setColor(mTabStyleDelegate.getDividerColor());
@@ -93,65 +88,4 @@ public class DefaultTabStyle extends JTabStyle {
             }
         }
     }
-
-
-    protected void calcuteIndicatorLinePosition(ViewGroup tabsContainer, float currentPositionOffset, int lastCheckedPosition) {
-        // if there is an offset, start interpolating left and right coordinates between current and next tab
-        if (currentPositionOffset > 0f &&
-                mTabStyleDelegate.getCurrentPosition() < tabsContainer.getChildCount() - 1) {
-
-            mNextTab = tabsContainer.getChildAt(mTabStyleDelegate.getCurrentPosition() + 1);
-            final float nextTabLeft = mNextTab.getLeft();
-            final float nextTabRight = mNextTab.getRight();
-
-            moveStyle_normal(currentPositionOffset, nextTabLeft, nextTabRight);
-
-            //moveStyle_sticky(currentPositionOffset, lastCheckedPosition, nextTabLeft, nextTabRight);
-        }
-    }
-
-
-    //private void moveStyle_normal(float currentPositionOffset, float nextTabLeft, float nextTabRight) {
-    //    mLinePosition.x = (currentPositionOffset * nextTabLeft +
-    //            (1f - currentPositionOffset) * mLinePosition.x);
-    //    mLinePosition.y = (currentPositionOffset * nextTabRight +
-    //            (1f - currentPositionOffset) * mLinePosition.y);
-    //}
-    //
-    //
-    //protected void moveStyle_sticky(float currentPositionOffset, int lastCheckedPosition, float nextTabLeft, float nextTabRight) {
-    //    if (mTabStrip.getState() == ViewPager.SCROLL_STATE_DRAGGING ||
-    //            mTabStrip.getState() == ViewPager.SCROLL_STATE_IDLE) {
-    //        if (lastCheckedPosition == mTabStyleDelegate.getCurrentPosition()) {
-    //            mDragRight = true;
-    //            //Log.d(TAG, "往右 ------>> ");
-    //        }
-    //        else {
-    //            mDragRight = false;
-    //            //Log.d(TAG, "往左 <<------");
-    //        }
-    //    }
-    //    if (mDragRight) {
-    //        //                ------>>
-    //        if (currentPositionOffset >= 0.5) {
-    //            mLinePosition.x = (
-    //                    2 * (nextTabLeft - mLinePosition.x) * currentPositionOffset + 2 * mLinePosition.x -
-    //                            nextTabLeft);
-    //        }
-    //        mLinePosition.y = (currentPositionOffset * nextTabRight +
-    //                (1f - currentPositionOffset) * mLinePosition.y);
-    //    }
-    //    else {
-    //        //                <<------
-    //        mLinePosition.x = (currentPositionOffset * nextTabLeft +
-    //                (1f - currentPositionOffset) * mLinePosition.x);
-    //        if (currentPositionOffset <= 0.5) {
-    //            mLinePosition.y = (2 * (nextTabRight - mLinePosition.y) * currentPositionOffset +
-    //                    mLinePosition.y);
-    //        }
-    //        else {
-    //            mLinePosition.y = nextTabRight;
-    //        }
-    //    }
-    //}
 }

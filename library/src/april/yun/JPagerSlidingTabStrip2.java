@@ -20,10 +20,10 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Checkable;
-import android.widget.CheckedTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import april.yun.other.JTabStyleDelegate;
+import april.yun.other.PromptView;
 import april.yun.other.SavedState;
 import april.yun.tabstyle.JTabStyle;
 import java.util.ArrayList;
@@ -82,13 +82,13 @@ public class JPagerSlidingTabStrip2 extends LinearLayout implements ISlidingTabS
         if (locale == null) {
             locale = getResources().getConfiguration().locale;
         }
-        mTabStyleDelegate = new JTabStyleDelegate().obtainAttrs(this, attrs, defStyle);
-        mJTabStyle = mTabStyleDelegate.getJTabStyle();
+        mTabStyleDelegate = new JTabStyleDelegate().obtainAttrs(this, attrs, getContext());
     }
 
 
     public void setViewPager(ViewPager pager) {
         this.pager = pager;
+        mJTabStyle = mTabStyleDelegate.getJTabStyle();
         if (pager.getAdapter() == null) {
             throw new IllegalStateException("ViewPager does not have adapter instance.");
         }
@@ -107,31 +107,33 @@ public class JPagerSlidingTabStrip2 extends LinearLayout implements ISlidingTabS
     public void notifyDataSetChanged() {
 
         //tabsContainer.
-                             removeAllViews();
+        removeAllViews();
         mTabCount = pager.getAdapter().getCount();
         if (!mJTabStyle.needChildView()) {
             removeAllViews();
-            return;
         }
+        else {
 
-        for (int i = 0; i < mTabCount; i++) {
+            for (int i = 0; i < mTabCount; i++) {
 
-            if (pager.getAdapter() instanceof IconTabProvider) {
-                if (((IconTabProvider) pager.getAdapter()).getPageIconResIds(i) != null) {
-                    addIconTab(i, pager.getAdapter().getPageTitle(i).toString(),
-                            ((IconTabProvider) pager.getAdapter()).getPageIconResIds(i));
+                if (pager.getAdapter() instanceof IconTabProvider) {
+                    if (((IconTabProvider) pager.getAdapter()).getPageIconResIds(i) != null) {
+                        addIconTab(i, pager.getAdapter().getPageTitle(i).toString(),
+                                ((IconTabProvider) pager.getAdapter()).getPageIconResIds(i));
+                    }
+                    else {
+                        addIconTab(i, pager.getAdapter().getPageTitle(i).toString(),
+                                ((IconTabProvider) pager.getAdapter()).getPageIconResId(i));
+                    }
                 }
                 else {
-                    addIconTab(i, pager.getAdapter().getPageTitle(i).toString(),
-                            ((IconTabProvider) pager.getAdapter()).getPageIconResId(i));
+                    addTextTab(i, pager.getAdapter().getPageTitle(i).toString());
                 }
             }
-            else {
-                addTextTab(i, pager.getAdapter().getPageTitle(i).toString());
-            }
+            updateTabStyles();
+            check(mTabStyleDelegate.setCurrentPosition(pager.getCurrentItem()));
         }
-        updateTabStyles();
-        check(mTabStyleDelegate.setCurrentPosition(pager.getCurrentItem()));
+        mJTabStyle.afterSetViewPager(this);
     }
 
 
@@ -145,7 +147,7 @@ public class JPagerSlidingTabStrip2 extends LinearLayout implements ISlidingTabS
             Log.e(TAG, "title is null ");
             return;
         }
-        CheckedTextView tab = new CheckedTextView(getContext());
+        PromptView tab = new PromptView(getContext());
         tab.setTextAlignment(TEXT_ALIGNMENT_GRAVITY);
         tab.setGravity(Gravity.CENTER);
         if (!mTabStyleDelegate.isNotDrawIcon() && resId.length > 0) {
@@ -158,6 +160,7 @@ public class JPagerSlidingTabStrip2 extends LinearLayout implements ISlidingTabS
                 }
             }
             else {
+                setPadding(0, getPaddingTop(), 0, getPaddingBottom());
                 mTabStyleDelegate.setShouldExpand(true);
                 tab.setCompoundDrawablePadding(0);
                 Drawable tabIcon = ContextCompat.getDrawable(getContext(), resId[0]);
@@ -210,8 +213,7 @@ public class JPagerSlidingTabStrip2 extends LinearLayout implements ISlidingTabS
             }
         });
         tab.setPadding(mTabStyleDelegate.getTabPadding(), 0, mTabStyleDelegate.getTabPadding(), 0);
-        //tabsContainer.
-                             addView(tab, position, expandedTabLayoutParams);
+        addView(tab, position, expandedTabLayoutParams);
     }
 
 
@@ -243,6 +245,7 @@ public class JPagerSlidingTabStrip2 extends LinearLayout implements ISlidingTabS
             }
         }
     }
+
 
     @Override protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -303,6 +306,14 @@ public class JPagerSlidingTabStrip2 extends LinearLayout implements ISlidingTabS
             return;
         }
         ((Checkable) getChildAt(position)).setChecked(true);
+    }
+
+
+    public ISlidingTabStrip setPromptNum(int index, int num) {
+        if (index < getChildCount()) {
+            ((PromptView) getChildAt(index)).setPromptNum(num);
+        }
+        return this;
     }
 
 

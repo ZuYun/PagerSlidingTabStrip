@@ -44,7 +44,7 @@ public class RoundTabStyle extends JTabStyle {
 
 
     @Override public void onSizeChanged(int w, int h, int oldw, int oldh) {
-        float pading = dp2dip(0.5f);
+        float pading = dp2dip(padingOffect);
         mW = w - pading;
         mH = h - pading;
         mTabCounts = mTabStrip.getTabsContainer().getChildCount();
@@ -57,7 +57,7 @@ public class RoundTabStyle extends JTabStyle {
 
 
     private void getClipPath(float pading, float width) {
-        RectF clip = new RectF(pading, pading, width, mH);
+        RectF clip = new RectF(pading, pading, width-pading, mH);
         mClipath = new Path();
         mClipath.addRoundRect(clip, mH / 2f, mH / 2f, Path.Direction.CCW);
     }
@@ -71,7 +71,7 @@ public class RoundTabStyle extends JTabStyle {
             rectPaint.setStyle(Paint.Style.STROKE);
             rectPaint.setColor(mTabStyleDelegate.getFrameColor());
             rectPaint.setStrokeWidth(dp2dip(1));
-            canvas.drawRoundRect(dp2dip(0.5f), dp2dip(0.5f), mLastTab.getRight(), this.mH, mOutRadio,
+            canvas.drawRoundRect(dp2dip(padingOffect), dp2dip(padingOffect), mLastTab.getRight()-dp2dip(padingOffect), this.mH, mOutRadio,
                     mOutRadio, rectPaint);
         }
         if (mTabStyleDelegate.getIndicatorColor() != Color.TRANSPARENT) {
@@ -80,7 +80,7 @@ public class RoundTabStyle extends JTabStyle {
                 if (preLasTabRight != mLastTab.getRight()) {
                     Log.d(TAG, "reCalculate clip Path");
                     preLasTabRight = mLastTab.getRight();
-                    getClipPath(dp2dip(0.5f), preLasTabRight);
+                    getClipPath(dp2dip(padingOffect), preLasTabRight);
                 }
                 canvas.save();
                 canvas.clipPath(mClipath);
@@ -103,7 +103,7 @@ public class RoundTabStyle extends JTabStyle {
         if (mTabStyleDelegate.getUnderlineColor() != Color.TRANSPARENT) {
             // draw underline
             rectPaint.setColor(mTabStyleDelegate.getUnderlineColor());
-            canvas.drawRect(0, mH - mTabStyleDelegate.getUnderlineColor(), tabsContainer.getWidth(), mH,
+            canvas.drawRect(0, mH - mTabStyleDelegate.getUnderlineHeight(), tabsContainer.getWidth(), mH,
                     rectPaint);
         }
 

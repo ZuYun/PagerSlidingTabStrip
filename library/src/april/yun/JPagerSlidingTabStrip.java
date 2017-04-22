@@ -19,12 +19,12 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Checkable;
-import android.widget.CheckedTextView;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import april.yun.other.JTabStyleDelegate;
+import april.yun.other.PromptView;
 import april.yun.other.SavedState;
 import april.yun.tabstyle.JTabStyle;
 import java.util.ArrayList;
@@ -80,16 +80,16 @@ public class JPagerSlidingTabStrip extends HorizontalScrollView implements ISlid
         tabsContainer.setGravity(Gravity.CENTER_VERTICAL);
         tabsContainer.setOrientation(LinearLayout.HORIZONTAL);
         tabsContainer.setLayoutParams(new LinearLayout.LayoutParams(-1, -1));
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(-1,-2);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(-1, -2);
         layoutParams.gravity = Gravity.CENTER_VERTICAL;
-        addView(tabsContainer,layoutParams);
+        addView(tabsContainer, layoutParams);
         defaultTabLayoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.MATCH_PARENT);
         expandedTabLayoutParams = new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1.0f);
         if (locale == null) {
             locale = getResources().getConfiguration().locale;
         }
-        mTabStyleDelegate = new JTabStyleDelegate().obtainAttrs(this, attrs, defStyle);
+        mTabStyleDelegate = new JTabStyleDelegate().obtainAttrs(this, attrs, getContext());
         mJTabStyle = mTabStyleDelegate.getJTabStyle();
     }
 
@@ -117,27 +117,28 @@ public class JPagerSlidingTabStrip extends HorizontalScrollView implements ISlid
         mTabCount = pager.getAdapter().getCount();
         if (!mJTabStyle.needChildView()) {
             removeAllViews();
-            return;
         }
+        else {
+            for (int i = 0; i < mTabCount; i++) {
 
-        for (int i = 0; i < mTabCount; i++) {
-
-            if (pager.getAdapter() instanceof IconTabProvider) {
-                if (((IconTabProvider) pager.getAdapter()).getPageIconResIds(i) != null) {
-                    addIconTab(i, pager.getAdapter().getPageTitle(i).toString(),
-                            ((IconTabProvider) pager.getAdapter()).getPageIconResIds(i));
+                if (pager.getAdapter() instanceof IconTabProvider) {
+                    if (((IconTabProvider) pager.getAdapter()).getPageIconResIds(i) != null) {
+                        addIconTab(i, pager.getAdapter().getPageTitle(i).toString(),
+                                ((IconTabProvider) pager.getAdapter()).getPageIconResIds(i));
+                    }
+                    else {
+                        addIconTab(i, pager.getAdapter().getPageTitle(i).toString(),
+                                ((IconTabProvider) pager.getAdapter()).getPageIconResId(i));
+                    }
                 }
                 else {
-                    addIconTab(i, pager.getAdapter().getPageTitle(i).toString(),
-                            ((IconTabProvider) pager.getAdapter()).getPageIconResId(i));
+                    addTextTab(i, pager.getAdapter().getPageTitle(i).toString());
                 }
             }
-            else {
-                addTextTab(i, pager.getAdapter().getPageTitle(i).toString());
-            }
+            updateTabStyles();
+            check(mTabStyleDelegate.setCurrentPosition(pager.getCurrentItem()));
         }
-        updateTabStyles();
-        check(mTabStyleDelegate.setCurrentPosition(pager.getCurrentItem()));
+        mJTabStyle.afterSetViewPager(tabsContainer);
     }
 
 
@@ -151,7 +152,7 @@ public class JPagerSlidingTabStrip extends HorizontalScrollView implements ISlid
             Log.e(TAG, "title is null ");
             return;
         }
-        CheckedTextView tab = new CheckedTextView(getContext());
+        PromptView tab = new PromptView(getContext());
         tab.setTextAlignment(TEXT_ALIGNMENT_GRAVITY);
         tab.setSingleLine();
         tab.setGravity(Gravity.CENTER);
@@ -371,5 +372,13 @@ public class JPagerSlidingTabStrip extends HorizontalScrollView implements ISlid
 
     public ViewGroup getTabsContainer() {
         return tabsContainer;
+    }
+
+
+    public ISlidingTabStrip setPromptNum(int index, int num) {
+        if (index < tabsContainer.getChildCount()) {
+            ((PromptView) tabsContainer.getChildAt(index)).setPromptNum(num);
+        }
+        return this;
     }
 }

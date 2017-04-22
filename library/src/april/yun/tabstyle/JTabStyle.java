@@ -8,6 +8,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import april.yun.ISlidingTabStrip;
 import april.yun.other.JTabStyleDelegate;
 
@@ -25,8 +26,13 @@ public abstract class JTabStyle {
     protected View mCurrentTab;
     protected View mNextTab;
     protected int mTabCounts;
+    protected float padingOffect = 0.3f;
     //x:left  y:fight
     protected PointF mLinePosition = new PointF(0, 0);
+
+    public int moveStyle = MOVESTYLE_STIKY;
+    public static final int MOVESTYLE_DEFAULT = 0;
+    public static final int MOVESTYLE_STIKY = 1;
 
 
     JTabStyle(ISlidingTabStrip slidingTabStrip) {
@@ -59,9 +65,12 @@ public abstract class JTabStyle {
             mNextTab = tabsContainer.getChildAt(mTabStyleDelegate.getCurrentPosition() + 1);
             final float nextTabLeft = mNextTab.getLeft();
             final float nextTabRight = mNextTab.getRight();
-            //moveStyle_normal(currentPositionOffset, nextTabLeft, nextTabRight);
-
-            moveStyle_sticky(currentPositionOffset, lastCheckedPosition, nextTabLeft, nextTabRight);
+            if (moveStyle == MOVESTYLE_DEFAULT) {
+                moveStyle_normal(currentPositionOffset, nextTabLeft, nextTabRight);
+            }
+            else {
+                moveStyle_sticky(currentPositionOffset, lastCheckedPosition, nextTabLeft, nextTabRight);
+            }
         }
     }
 
@@ -79,7 +88,7 @@ public abstract class JTabStyle {
                 mTabStrip.getState() == ViewPager.SCROLL_STATE_IDLE) {
             if (lastCheckedPosition == mTabStyleDelegate.getCurrentPosition()) {
                 mDragRight = true;
-                //Log.d(TAG, "往右 ------>> ");
+                //Log.d(TAG, "indicator 往右滑动 ------>> ");
             }
             else {
                 mDragRight = false;
@@ -108,6 +117,11 @@ public abstract class JTabStyle {
                 mLinePosition.y = nextTabRight;
             }
         }
+    }
+
+
+    public void afterSetViewPager(LinearLayout tabsContainer) {
+
     }
 }
 

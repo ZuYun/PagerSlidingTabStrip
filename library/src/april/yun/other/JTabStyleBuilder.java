@@ -4,6 +4,7 @@ import android.support.annotation.IntDef;
 import april.yun.ISlidingTabStrip;
 import april.yun.tabstyle.DefaultTabStyle;
 import april.yun.tabstyle.DotsTabStyle;
+import april.yun.tabstyle.GradientTabStyle;
 import april.yun.tabstyle.JTabStyle;
 import april.yun.tabstyle.RoundTabStyle;
 
@@ -11,7 +12,7 @@ public class JTabStyleBuilder {
     public static final int STYLE_DEFAULT = 0;
     public static final int STYLE_ROUND = 1;
     public static final int STYLE_DOTS = 2;
-    public static final int STYLE_CUSTOM = -1;
+    public static final int STYLE_GRADIENT = -1;
 
     @IntDef({ STYLE_DEFAULT, STYLE_ROUND, STYLE_DOTS }) public @interface TabStyle {}
 
@@ -27,7 +28,7 @@ public class JTabStyleBuilder {
             return new DotsTabStyle(slidingTabStrip);
         }
         else {
-            return new DefaultTabStyle(slidingTabStrip);
+            return new GradientTabStyle(slidingTabStrip);
         }
     }
 }
