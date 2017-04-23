@@ -22,7 +22,7 @@ import android.widget.Checkable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import april.yun.other.JTabStyleDelegate;
-import april.yun.other.PromptView;
+import april.yun.widget.PromptView;
 import april.yun.other.SavedState;
 import april.yun.tabstyle.JTabStyle;
 import java.util.ArrayList;
@@ -147,8 +147,6 @@ public class JPagerSlidingTabStrip2 extends LinearLayout implements ISlidingTabS
             return;
         }
         PromptView tab = new PromptView(getContext());
-        //tab.setTextAlignment(TEXT_ALIGNMENT_GRAVITY);
-        //tab.setGravity(Gravity.CENTER);
         if (!mTabStyleDelegate.isNotDrawIcon() && resId.length > 0) {
             if (mTabStyleDelegate.getTabIconGravity() == Gravity.NO_GRAVITY) {
                 if (resId.length > 1) {

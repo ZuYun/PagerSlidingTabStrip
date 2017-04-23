@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import april.yun.ISlidingTabStrip;
 
 /**
@@ -37,8 +38,12 @@ public class RoundTabStyle extends JTabStyle {
         super(slidingTabStrip);
         rectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         rectPaint.setStyle(Paint.Style.FILL);
-
         dividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        dividerPaint.setStyle(Paint.Style.STROKE);
+    }
+
+
+    @Override public void afterSetViewPager(LinearLayout tabsContainer) {
         dividerPaint.setStrokeWidth(mTabStyleDelegate.getDividerWidth());
     }
 
@@ -68,11 +73,9 @@ public class RoundTabStyle extends JTabStyle {
 
         if (mTabStyleDelegate.getFrameColor() != Color.TRANSPARENT) {
             //画边框
-            rectPaint.setStyle(Paint.Style.STROKE);
-            rectPaint.setColor(mTabStyleDelegate.getFrameColor());
-            rectPaint.setStrokeWidth(dp2dip(1));
+            dividerPaint.setColor(mTabStyleDelegate.getFrameColor());
             canvas.drawRoundRect(dp2dip(padingOffect), dp2dip(padingOffect), mLastTab.getRight()-dp2dip(padingOffect), this.mH, mOutRadio,
-                    mOutRadio, rectPaint);
+                    mOutRadio, dividerPaint);
         }
         if (mTabStyleDelegate.getIndicatorColor() != Color.TRANSPARENT) {
             if (mTabStyleDelegate.isNotDrawIcon()) {
@@ -87,14 +90,9 @@ public class RoundTabStyle extends JTabStyle {
             }
             // draw indicator line
             rectPaint.setColor(mTabStyleDelegate.getIndicatorColor());
-            // default: line below current tab
-            mCurrentTab = tabsContainer.getChildAt(mTabStyleDelegate.getCurrentPosition());
-            mLinePosition.x = mCurrentTab.getLeft();
-            mLinePosition.y = mCurrentTab.getRight();
 
             calcuteIndicatorLinePosition(tabsContainer, currentPositionOffset, lastCheckedPosition);
 
-            rectPaint.setStyle(Paint.Style.FILL);
             //draw indicator
             canvas.drawRect(mLinePosition.x, 0, mLinePosition.y, mH,
                     rectPaint);

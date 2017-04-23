@@ -15,7 +15,6 @@ import com.jonas.acase.fragment.SuperAwesomeCardFragment;
 
 import static april.yun.other.JTabStyleBuilder.STYLE_DEFAULT;
 import static april.yun.other.JTabStyleBuilder.STYLE_DOTS;
-import static april.yun.other.JTabStyleBuilder.STYLE_GRADIENT;
 import static april.yun.other.JTabStyleBuilder.STYLE_ROUND;
 import static april.yun.tabstyle.JTabStyle.MOVESTYLE_DEFAULT;
 
@@ -56,7 +55,7 @@ public class MainActivity extends FragmentActivity {
         setupStrip(tabs_up.getTabStyleDelegate(), STYLE_ROUND);
         setupStrip(tabs_up1.getTabStyleDelegate(), STYLE_DEFAULT);
         setupStrip(tabs_up2.getTabStyleDelegate(), STYLE_DEFAULT);
-        setupStrip(tabs_up3.getTabStyleDelegate(), STYLE_GRADIENT);
+        setupStrip(tabs_up3.getTabStyleDelegate(), STYLE_DEFAULT);
         setupStrip(tabs_buttom.getTabStyleDelegate(), STYLE_DEFAULT);
         setupStrip(dots.getTabStyleDelegate(), STYLE_DOTS);
         tabs_buttom.getTabStyleDelegate()
@@ -65,12 +64,12 @@ public class MainActivity extends FragmentActivity {
                    .setDividerColor(Color.TRANSPARENT);
         tabs_up.getTabStyleDelegate().setNotDrawIcon(true);
         tabs_up1.getTabStyleDelegate().setNotDrawIcon(true);
-        tabs_up1.getTabStyleDelegate().getJTabStyle().moveStyle = MOVESTYLE_DEFAULT;
+        tabs_up3.getTabStyleDelegate().getJTabStyle().moveStyle = MOVESTYLE_DEFAULT;
 
         tabs_up2.getTabStyleDelegate()
                 .setNotDrawIcon(true)
                 .setFrameColor(Color.TRANSPARENT)
-                .setDividerColor(Color.TRANSPARENT)
+                .setDividerPadding(20)
                 .setIndicatorHeight(5);
 
         tabs_up3.getTabStyleDelegate().setNotDrawIcon(true);

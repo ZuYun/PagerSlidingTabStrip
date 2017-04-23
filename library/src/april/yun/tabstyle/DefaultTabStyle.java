@@ -31,12 +31,15 @@ public class DefaultTabStyle extends JTabStyle {
         rectPaint.setStyle(Paint.Style.FILL);
 
         dividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        dividerPaint.setStyle(Paint.Style.STROKE);
     }
+
 
     @Override public void afterSetViewPager(LinearLayout tabsContainer) {
         dividerPaint.setStrokeWidth(mTabStyleDelegate.getDividerWidth());
-        rectPaint.setStyle(Paint.Style.STROKE);
+        mOutRadio = mTabStyleDelegate.getCornerRadio();
     }
+
 
     @Override public void onSizeChanged(int w, int h, int oldw, int oldh) {
         float pading = dp2dip(padingOffect);
@@ -50,27 +53,30 @@ public class DefaultTabStyle extends JTabStyle {
     public void onDraw(Canvas canvas, ViewGroup tabsContainer, float currentPositionOffset, int lastCheckedPosition) {
         if (mTabStyleDelegate.getFrameColor() != Color.TRANSPARENT) {
             //画边框
-            rectPaint.setStyle(Paint.Style.STROKE);
-            rectPaint.setColor(mTabStyleDelegate.getFrameColor());
-            rectPaint.setStrokeWidth(dp2dip(1));
-
-            canvas.drawRoundRect(dp2dip(padingOffect), dp2dip(padingOffect), mLastTab.getRight()-dp2dip(padingOffect), this.mH, mOutRadio,
-                    mOutRadio, rectPaint);
+            dividerPaint.setColor(mTabStyleDelegate.getFrameColor());
+            canvas.drawRoundRect(dp2dip(padingOffect), dp2dip(padingOffect),
+                    mLastTab.getRight() - dp2dip(padingOffect), this.mH, mOutRadio, mOutRadio, dividerPaint);
         }
 
         if (mTabStyleDelegate.getIndicatorColor() != Color.TRANSPARENT) {
             // draw indicator line
             rectPaint.setColor(mTabStyleDelegate.getIndicatorColor());
-            // default: line below current tab
-            mCurrentTab = tabsContainer.getChildAt(mTabStyleDelegate.getCurrentPosition());
-            mLinePosition.x = mCurrentTab.getLeft();
-            mLinePosition.y = mCurrentTab.getRight();
-
             calcuteIndicatorLinePosition(tabsContainer, currentPositionOffset, lastCheckedPosition);
-            rectPaint.setStyle(Paint.Style.FILL);
             //draw indicator
-            canvas.drawRoundRect(mLinePosition.x, mH - mTabStyleDelegate.getIndicatorHeight(),
-                    mLinePosition.y, mH, mOutRadio, mOutRadio, rectPaint);
+            if (mTabStyleDelegate.getIndicatorHeight() >= mH / 2) {
+                //画在中间
+                int halfIndHeight = mTabStyleDelegate.getIndicatorHeight() / 2;
+                float indPading = mH / 2 - halfIndHeight;
+
+                canvas.drawRoundRect(mLinePosition.x + indPading, indPading, mLinePosition.y - indPading,
+                        mH - indPading, mOutRadio, mOutRadio, rectPaint);
+            }
+            else {
+                //画在底部
+                //draw indicator
+                canvas.drawRoundRect(mLinePosition.x, mH - mTabStyleDelegate.getIndicatorHeight(),
+                        mLinePosition.y, mH, mOutRadio, mOutRadio, rectPaint);
+            }
         }
         if (mTabStyleDelegate.getUnderlineColor() != Color.TRANSPARENT) {
             // draw underline

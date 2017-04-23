@@ -62,6 +62,7 @@ public class JTabStyleDelegate {
     private int tabTypefaceStyle = Typeface.NORMAL;
     private int mTabStyle = STYLE_DEFAULT;
     private JTabStyle mJTabStyle;
+    private int mCornerRadio;
 
 
     public JTabStyleDelegate obtainAttrs(ISlidingTabStrip tabStrip, AttributeSet attrs, Context context) {
@@ -367,6 +368,16 @@ public class JTabStyleDelegate {
             mJTabStyle = JTabStyleBuilder.createJTabStyle(mTabStrip, mTabStyle);
         }
         return mJTabStyle;
+    }
+
+
+    public int getCornerRadio() {
+        return mCornerRadio;
+    }
+
+
+    public void setCornerRadio(int cornerRadio) {
+        mCornerRadio = cornerRadio;
     }
 
 

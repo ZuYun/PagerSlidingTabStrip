@@ -25,7 +25,7 @@ public class DotsTabStyle extends JTabStyle {
     private float mW;
     private float mH;
     private PointF mCurrentTab;
-    private float dosRadio = 10;
+    private float dosRadio;
     private PointF mNextTab;
     //x:left  y:fight
     private PointF mLinePosition = new PointF(0, 0);
@@ -48,6 +48,8 @@ public class DotsTabStyle extends JTabStyle {
     @Override public void afterSetViewPager(LinearLayout tabsContainer) {
         bgPaint.setColor(mTabStyleDelegate.getUnderlineColor());
         mIndicatorPaint.setColor(mTabStyleDelegate.getIndicatorColor());
+        dosRadio = mTabStyleDelegate.getCornerRadio();
+        dosRadio = dosRadio == 0 ? dp2dip(4) : dosRadio;
     }
 
 
@@ -69,10 +71,6 @@ public class DotsTabStyle extends JTabStyle {
         Log.d(TAG, "Current: " + mTabStyleDelegate.getCurrentPosition() + "----lastChecked: " +
                 lastCheckedPosition);
         // draw indicator line
-        // default: line below current tab
-        mCurrentTab = fake_container.get(mTabStyleDelegate.getCurrentPosition());
-        mLinePosition.x = mCurrentTab.x;
-        mLinePosition.y = mCurrentTab.y;
         calcuteIndicatorLinePosition(tabsContainer, currentPositionOffset, lastCheckedPosition);
         //draw indicator
         canvas.drawRoundRect(mLinePosition.x + mTabWidth / 2 - dosRadio, mH / 2 - dosRadio,
@@ -86,6 +84,10 @@ public class DotsTabStyle extends JTabStyle {
 
 
     protected void calcuteIndicatorLinePosition(ViewGroup tabsContainer, float currentPositionOffset, int lastCheckedPosition) {
+        // default: line below current tab
+        mCurrentTab = fake_container.get(mTabStyleDelegate.getCurrentPosition());
+        mLinePosition.x = mCurrentTab.x;
+        mLinePosition.y = mCurrentTab.y;
         // if there is an offset, start interpolating left and right coordinates between current and next tab
         if (currentPositionOffset > 0f &&
                 mTabStyleDelegate.getCurrentPosition() < fake_container.size() - 1) {
@@ -99,7 +101,6 @@ public class DotsTabStyle extends JTabStyle {
             else {
                 moveStyle_sticky(currentPositionOffset, lastCheckedPosition, nextTabLeft, nextTabRight);
             }
-            //moveStyle_sticky(currentPositionOffset, lastCheckedPosition, nextTabLeft, nextTabRight);
         }
     }
 

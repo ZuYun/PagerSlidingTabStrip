@@ -1,5 +1,6 @@
-package april.yun.other;
+package april.yun.widget;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -14,6 +15,8 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.CheckedTextView;
 
 /**
@@ -23,7 +26,8 @@ import android.widget.CheckedTextView;
  * @since [https://github.com/mychoices]
  * <p><a href="https://github.com/mychoices">github</a>
  */
-public class PromptView extends CheckedTextView {
+public class PromptView extends CheckedTextView implements ValueAnimator.AnimatorUpdateListener {
+    private static final long SHOWTIME = 500;
     private Paint mBgPaint;
     private Paint mNumPaint;
     private int color_bg = Color.RED;
@@ -37,6 +41,8 @@ public class PromptView extends CheckedTextView {
     private static final String NOTIFY = "nofity";
     private static final String ALOT = "~";
     //private static final String ALOT = "...~~";
+    private String mLastMsg = "";
+    private ValueAnimator mShowAni;
 
 
     public static float dp2px(float px) {
@@ -70,6 +76,10 @@ public class PromptView extends CheckedTextView {
         mNumPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mNumPaint.setTextAlign(Paint.Align.CENTER);
         mBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mShowAni = ValueAnimator.ofFloat(0, 1);
+        mShowAni.setDuration(SHOWTIME);
+        //mShowAni.setInterpolator(new AccelerateDecelerateInterpolator());
+        mShowAni.addUpdateListener(this);
     }
 
 
@@ -81,7 +91,7 @@ public class PromptView extends CheckedTextView {
         refreshNotifyBg();
         Drawable[] compoundDrawables = getCompoundDrawables();
         if (haveCompoundDrawable(compoundDrawables)) {
-            setPadding(getPaddingLeft(), (int) (mNumHeight/2), getPaddingRight(), (int) (mNumHeight/2));
+            setPadding(getPaddingLeft(), (int) (mNumHeight / 2), getPaddingRight(), (int) (mNumHeight / 2));
         }
         else {
             setPadding(getPaddingLeft(), (int) (mNumHeight), getPaddingRight(), (int) (mNumHeight));
@@ -89,8 +99,14 @@ public class PromptView extends CheckedTextView {
 
         mBgPaint.setColor(color_bg);
         mNumPaint.setColor(color_num);
+        startShowAni();
     }
 
+
+    @Override protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        //before onSizechange
+    }
 
     private boolean haveCompoundDrawable(Drawable[] compoundDrawables) {
         for (Drawable compoundDrawable : compoundDrawables) {
@@ -169,11 +185,9 @@ public class PromptView extends CheckedTextView {
     /**
      * 当num的值小于0 显示提示小圆点
      * 等于0 不现实任何
-     * @param num
-     * @return
      */
     public PromptView setPromptNum(int num) {
-        msg_str = String.format("%d",num);
+        msg_str = String.format("%d", num);
         if (num > 99) {
             msg_str = ALOT;
         }
@@ -183,8 +197,30 @@ public class PromptView extends CheckedTextView {
         else if (num < 0) {
             msg_str = NOTIFY;
         }
-        refreshNotifyBg();
+        if (mHalfW > 0) {
+            refreshNotifyBg();
+            startShowAni();
+        }
         return this;
+    }
+
+
+    private void startShowAni() {
+        if (TextUtils.isEmpty(msg_str)) {//移除消息
+            mLastMsg = "";
+            //有消息到没消息
+            mShowAni.cancel();
+            mShowAni.setInterpolator(new DecelerateInterpolator());
+            mShowAni.start();
+            //mShowAni.setStartDelay(1000);
+        }
+        else if (TextUtils.isEmpty(mLastMsg)) {//没消息到 显示消息
+            //没消息到有消息
+            mLastMsg = NOTIFY;
+            mShowAni.cancel();
+            mShowAni.setInterpolator(new BounceInterpolator());
+            mShowAni.start();
+        }
     }
 
 
@@ -200,5 +236,14 @@ public class PromptView extends CheckedTextView {
 
     public void setNum_size(int num_size) {
         this.num_size = num_size;
+    }
+
+
+    @Override public void onAnimationUpdate(ValueAnimator animation) {
+        float ratio = (float) animation.getAnimatedValue();
+        ratio = TextUtils.isEmpty(mLastMsg) ? 1-ratio : ratio;
+        mPromptCenterPoint.y = mNumHeight * ratio;
+        mMsgBg.bottom=mNumHeight * 2 * ratio;
+        invalidate();
     }
 }

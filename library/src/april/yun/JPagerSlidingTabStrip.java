@@ -24,9 +24,9 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import april.yun.other.JTabStyleDelegate;
-import april.yun.other.PromptView;
 import april.yun.other.SavedState;
 import april.yun.tabstyle.JTabStyle;
+import april.yun.widget.PromptView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -378,5 +378,15 @@ public class JPagerSlidingTabStrip extends HorizontalScrollView implements ISlid
             ((PromptView) tabsContainer.getChildAt(index)).setPromptNum(num);
         }
         return this;
+    }
+
+
+    @Override protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+    }
+
+
+    @Override protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
     }
 }

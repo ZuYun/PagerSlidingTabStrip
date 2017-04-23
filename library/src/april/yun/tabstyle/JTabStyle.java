@@ -58,6 +58,10 @@ public abstract class JTabStyle {
 
 
     protected void calcuteIndicatorLinePosition(ViewGroup tabsContainer, float currentPositionOffset, int lastCheckedPosition) {
+        // default: line below current tab
+        mCurrentTab = tabsContainer.getChildAt(mTabStyleDelegate.getCurrentPosition());
+        mLinePosition.x = mCurrentTab.getLeft();
+        mLinePosition.y = mCurrentTab.getRight();
         // if there is an offset, start interpolating left and right coordinates between current and next tab
         if (currentPositionOffset > 0f &&
                 mTabStyleDelegate.getCurrentPosition() < tabsContainer.getChildCount() - 1) {
