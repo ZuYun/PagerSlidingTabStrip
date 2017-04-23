@@ -18,15 +18,12 @@ package com.jonas.acase.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.FrameLayout.LayoutParams;
-import android.widget.TextView;
 import com.jonas.acase.R;
+import com.jonas.acase.eventbusmsg.PromptMsg;
+import org.greenrobot.eventbus.EventBus;
 
 public class SuperAwesomeCardFragment extends Fragment {
 
@@ -52,24 +49,26 @@ public class SuperAwesomeCardFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-
-		FrameLayout fl = new FrameLayout(getActivity());
-		fl.setLayoutParams(params);
-
-		final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
-				.getDisplayMetrics());
-
-		TextView v = new TextView(getActivity());
-		params.setMargins(margin, margin, margin, margin);
-		v.setLayoutParams(params);
-		v.setLayoutParams(params);
-		v.setGravity(Gravity.CENTER);
-		v.setBackgroundResource(R.drawable.background_card);
-		v.setText("CARD " + (position + 1));
-
-		fl.addView(v);
-		return fl;
+		View inflate = inflater.inflate(R.layout.fm_content, null);
+		inflate.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) {
+				//隨機
+				EventBus.getDefault().post(new PromptMsg(position,PromptMsg.RANDOM));
+			}
+		});
+		inflate.findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) {
+				//clear
+				EventBus.getDefault().post(new PromptMsg(position,PromptMsg.CLEAR));
+			}
+		});
+		inflate.findViewById(R.id.button3).setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) {
+				//show
+				EventBus.getDefault().post(new PromptMsg(position,PromptMsg.SHOW));
+			}
+		});
+		return inflate;
 	}
 
 }

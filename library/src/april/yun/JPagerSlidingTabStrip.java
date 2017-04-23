@@ -117,13 +117,11 @@ public class JPagerSlidingTabStrip extends HorizontalScrollView implements ISlid
 
         tabsContainer.removeAllViews();
         mTabCount = pager.getAdapter().getCount();
-        if (!mJTabStyle.needChildView()) {
-            removeAllViews();
-        }
-        else {
+        if (mJTabStyle.needChildView()) {
             for (int i = 0; i < mTabCount; i++) {
-
                 if (pager.getAdapter() instanceof IconTabProvider) {
+                    //有提供icon
+                    Log.d(TAG, "haove tabIcon");
                     if (((IconTabProvider) pager.getAdapter()).getPageIconResIds(i) != null) {
                         addIconTab(i, pager.getAdapter().getPageTitle(i).toString(),
                                 ((IconTabProvider) pager.getAdapter()).getPageIconResIds(i));
@@ -134,6 +132,9 @@ public class JPagerSlidingTabStrip extends HorizontalScrollView implements ISlid
                     }
                 }
                 else {
+                    //没有提供icon
+                    Log.d(TAG, "haove no tabIcon");
+                    mTabStyleDelegate.setNotDrawIcon(true);
                     addTextTab(i, pager.getAdapter().getPageTitle(i).toString());
                 }
             }
@@ -155,6 +156,8 @@ public class JPagerSlidingTabStrip extends HorizontalScrollView implements ISlid
             return;
         }
         PromptView tab = new PromptView(getContext());
+        tab.setColor_bg(mTabStyleDelegate.getPromptBgColor());
+        tab.setColor_num(mTabStyleDelegate.getPromptNumColor());
         if (!mTabStyleDelegate.isNotDrawIcon()) {
             if (mTabStyleDelegate.getTabIconGravity() == Gravity.NO_GRAVITY) {
                 if (resId.length > 1) {
@@ -265,14 +268,17 @@ public class JPagerSlidingTabStrip extends HorizontalScrollView implements ISlid
 
     @Override protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mJTabStyle.onSizeChanged(w, h, oldw, oldh);
+        if (!mJTabStyle.needChildView() || tabsContainer.getChildCount() > 0) {
+            mJTabStyle.onSizeChanged(w, h, oldw, oldh);
+        }
     }
 
 
     @Override protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (isInEditMode() || mTabCount == 0) {
+        if (mJTabStyle.needChildView()  && tabsContainer.getChildCount() == 0 || isInEditMode() ||
+                mTabCount == 0) {
             return;
         }
 

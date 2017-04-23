@@ -2,6 +2,7 @@ package april.yun.tabstyle;
 
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.PointF;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
@@ -16,32 +17,52 @@ import april.yun.other.JTabStyleDelegate;
  * @author yun.
  * @date 2017/4/21
  * @des [一句话描述]
- * @since [https://github.com/mychoices]
- * <p><a href="https://github.com/mychoices">github</a>
+ * @since [https://github.com/ZuYun]
+ * <p><a href="https://github.com/ZuYun">github</a>
  */
 public abstract class JTabStyle {
+    public static final long SHOWANI = 500;
     protected final JTabStyleDelegate mTabStyleDelegate;
+    protected Paint mDividerPaint;
+    protected Paint mIndicatorPaint;
     protected ISlidingTabStrip mTabStrip;
     protected boolean mDragRight;
     protected View mCurrentTab;
     protected View mNextTab;
     protected int mTabCounts;
     protected float padingOffect = 0.3f;
-    //x:left  y:fight
+    /**
+     * x:left  y:fight <br>
+     * the left and right position of indicator
+     */
     protected PointF mLinePosition = new PointF(0, 0);
 
     public int moveStyle = MOVESTYLE_STIKY;
     public static final int MOVESTYLE_DEFAULT = 0;
     public static final int MOVESTYLE_STIKY = 1;
+    protected View mLastTab;
+    protected float mW;
+    protected float mH;
 
 
-    JTabStyle(ISlidingTabStrip slidingTabStrip) {
+    public JTabStyle(ISlidingTabStrip slidingTabStrip) {
         mTabStyleDelegate = slidingTabStrip.getTabStyleDelegate();
         mTabStrip = slidingTabStrip;
+        mDividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mDividerPaint.setStyle(Paint.Style.STROKE);
+        mIndicatorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mIndicatorPaint.setStyle(Paint.Style.FILL);
     }
 
 
-    public abstract void onSizeChanged(int w, int h, int oldw, int oldh);
+    public void onSizeChanged(int w, int h, int oldw, int oldh) {
+        float pading = dp2dip(0.5f);
+        mW = w - pading;
+        mH = h - pading;
+        mTabCounts = mTabStrip.getTabsContainer().getChildCount();
+        mLastTab = mTabStrip.getTabsContainer().getChildAt(mTabCounts - 1);
+    }
+
 
     public abstract void onDraw(Canvas canvas, ViewGroup tabsContainer, float currentPositionOffset, int lastCheckedPosition);
 
@@ -126,6 +147,13 @@ public abstract class JTabStyle {
 
     public void afterSetViewPager(LinearLayout tabsContainer) {
 
+        mDividerPaint.setStrokeWidth(mTabStyleDelegate.getDividerWidth());
+        mDividerPaint.setStrokeWidth(mTabStyleDelegate.getDividerColor());
+        mIndicatorPaint.setColor(mTabStyleDelegate.getIndicatorColor());
+
+        mDividerPaint.setStrokeWidth(mTabStyleDelegate.getDividerWidth());
+        mDividerPaint.setColor(mTabStyleDelegate.getDividerColor());
+        mIndicatorPaint.setColor(mTabStyleDelegate.getIndicatorColor());
     }
 }
 

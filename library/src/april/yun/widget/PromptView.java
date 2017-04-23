@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.animation.BounceInterpolator;
@@ -23,11 +24,14 @@ import android.widget.CheckedTextView;
  * @author yun.
  * @date 2017/4/22
  * @des [一句话描述]
- * @since [https://github.com/mychoices]
- * <p><a href="https://github.com/mychoices">github</a>
+ * @since [https://github.com/ZuYun]
+ * <p><a href="https://github.com/ZuYun">github</a>
  */
 public class PromptView extends CheckedTextView implements ValueAnimator.AnimatorUpdateListener {
-    private static final long SHOWTIME = 500;
+    private static final String TAG = PromptView.class.getSimpleName();
+    private static final int SHOWTIME = 360;
+    private static final int CLEARPROMPT = 0;
+    private static final int DOTSNOTIFY = -1991;
     private Paint mBgPaint;
     private Paint mNumPaint;
     private int color_bg = Color.RED;
@@ -38,11 +42,13 @@ public class PromptView extends CheckedTextView implements ValueAnimator.Animato
     private String msg_str = "";
     private PointF mPromptCenterPoint;
     private RectF mMsgBg;
-    private static final String NOTIFY = "nofity";
+    private static final String NOTIFY = "n";
     private static final String ALOT = "~";
     //private static final String ALOT = "...~~";
     private String mLastMsg = "";
     private ValueAnimator mShowAni;
+    //是否要清楚消息
+    private boolean msgIs_dirty;
 
 
     public static float dp2px(float px) {
@@ -80,6 +86,7 @@ public class PromptView extends CheckedTextView implements ValueAnimator.Animato
         mShowAni.setDuration(SHOWTIME);
         //mShowAni.setInterpolator(new AccelerateDecelerateInterpolator());
         mShowAni.addUpdateListener(this);
+        setTag(DOTSNOTIFY);//存储上一次显示的内容
     }
 
 
@@ -107,6 +114,7 @@ public class PromptView extends CheckedTextView implements ValueAnimator.Animato
         super.onAttachedToWindow();
         //before onSizechange
     }
+
 
     private boolean haveCompoundDrawable(Drawable[] compoundDrawables) {
         for (Drawable compoundDrawable : compoundDrawables) {
@@ -187,16 +195,26 @@ public class PromptView extends CheckedTextView implements ValueAnimator.Animato
      * 等于0 不现实任何
      */
     public PromptView setPromptNum(int num) {
-        msg_str = String.format("%d", num);
+        if (num == ((int) getTag())) {
+            Log.e(TAG, "set the same num width last time");
+            return this;
+        }
+        setTag(num);
+        msgIs_dirty = false;
         if (num > 99) {
             msg_str = ALOT;
         }
         else if (num == 0) {
-            msg_str = "";
+            //清除消息
+            msgIs_dirty = !msgIs_dirty;
         }
         else if (num < 0) {
             msg_str = NOTIFY;
         }
+        else {
+            msg_str = String.format("%d", num);
+        }
+        Log.d(TAG, "num: " + num);
         if (mHalfW > 0) {
             refreshNotifyBg();
             startShowAni();
@@ -206,20 +224,25 @@ public class PromptView extends CheckedTextView implements ValueAnimator.Animato
 
 
     private void startShowAni() {
-        if (TextUtils.isEmpty(msg_str)) {//移除消息
-            mLastMsg = "";
-            //有消息到没消息
-            mShowAni.cancel();
-            mShowAni.setInterpolator(new DecelerateInterpolator());
-            mShowAni.start();
-            //mShowAni.setStartDelay(1000);
-        }
-        else if (TextUtils.isEmpty(mLastMsg)) {//没消息到 显示消息
-            //没消息到有消息
-            mLastMsg = NOTIFY;
-            mShowAni.cancel();
-            mShowAni.setInterpolator(new BounceInterpolator());
-            mShowAni.start();
+        //为空表示不显示提示信息，清除提示信息会把msg_str置为空但是在动画结束之后
+        if (!TextUtils.isEmpty(msg_str)) {
+            if (msgIs_dirty) {//移除消息
+                Log.d(TAG, "remove prompt msg");
+                mLastMsg = "";
+                //有消息到没消息
+                mShowAni.cancel();
+                mShowAni.setInterpolator(new DecelerateInterpolator());
+                mShowAni.start();
+            }
+            else if (TextUtils.isEmpty(mLastMsg)) {//没消息到 显示消息
+                Log.d(TAG, "ani show prompt msg");
+                //没消息到有消息
+                mLastMsg = NOTIFY;
+                mShowAni.cancel();
+                mShowAni.setInterpolator(new BounceInterpolator());
+                mShowAni.start();
+            }
+            invalidate();
         }
     }
 
@@ -241,9 +264,13 @@ public class PromptView extends CheckedTextView implements ValueAnimator.Animato
 
     @Override public void onAnimationUpdate(ValueAnimator animation) {
         float ratio = (float) animation.getAnimatedValue();
-        ratio = TextUtils.isEmpty(mLastMsg) ? 1-ratio : ratio;
+        if (msgIs_dirty && ratio == 1) {
+            Log.d(TAG, "clear msg aready");
+            msg_str = "";//动画结束后情空消息
+        }
+        ratio = TextUtils.isEmpty(mLastMsg) ? 1 - ratio : ratio;
         mPromptCenterPoint.y = mNumHeight * ratio;
-        mMsgBg.bottom=mNumHeight * 2 * ratio;
+        mMsgBg.bottom = mNumHeight * 2 * ratio;
         invalidate();
     }
 }

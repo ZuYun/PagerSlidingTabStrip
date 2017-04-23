@@ -13,6 +13,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import april.yun.ISlidingTabStrip;
 import april.yun.tabstyle.JTabStyle;
+import april.yun.widget.PromptView;
 import com.astuetz.pagerslidingtabstrip.R;
 
 import static april.yun.other.JTabStyleBuilder.STYLE_DEFAULT;
@@ -21,8 +22,8 @@ import static april.yun.other.JTabStyleBuilder.STYLE_DEFAULT;
  * @author yun.
  * @date 2017/4/21
  * @des [一句话描述]
- * @since [https://github.com/mychoices]
- * <p><a href="https://github.com/mychoices">github</a>
+ * @since [https://github.com/ZuYun]
+ * <p><a href="https://github.com/ZuYun">github</a>
  */
 public class JTabStyleDelegate {
 
@@ -50,19 +51,21 @@ public class JTabStyleDelegate {
     private boolean shouldExpand = false;
     private boolean textAllCaps = false;
     private int scrollOffset = 52;
-    private int indicatorHeight = 8;
+    private int indicatorHeight = 5;
     private int underlineHeight = 2;
     private int dividerPadding = 12;
-    private int tabPadding = 10;
+    private int tabPadding = 2;
     private int dividerWidth = 1;
 
-    private int tabTextSize = 11;
+    private int tabTextSize = 13;
     private int tabTextColor = 0xFF666666;
     private Typeface tabTypeface = null;
     private int tabTypefaceStyle = Typeface.NORMAL;
     private int mTabStyle = STYLE_DEFAULT;
     private JTabStyle mJTabStyle;
     private int mCornerRadio;
+    private int mPromptBgColor=Color.RED;
+    private int mPromptNumColor=Color.WHITE;
 
 
     public JTabStyleDelegate obtainAttrs(ISlidingTabStrip tabStrip, AttributeSet attrs, Context context) {
@@ -255,7 +258,12 @@ public class JTabStyleDelegate {
 
 
     public int getTabPadding() {
-        return tabPadding;
+        if (shouldExpand) {
+            return tabPadding;
+        }
+        else {
+            return tabPadding> PromptView.dp2px(13) ? tabPadding : (int) PromptView.dp2px(13);
+        }
     }
 
 
@@ -319,7 +327,11 @@ public class JTabStyleDelegate {
         return this;
     }
 
-
+    /**
+     * adapter有设置icon的时候 true不显示
+     * @param notDrawIcon
+     * @return
+     */
     public JTabStyleDelegate setNotDrawIcon(boolean notDrawIcon) {
         mNotDrawIcon = notDrawIcon;
         return this;
@@ -376,12 +388,34 @@ public class JTabStyleDelegate {
     }
 
 
-    public void setCornerRadio(int cornerRadio) {
+    public JTabStyleDelegate setCornerRadio(int cornerRadio) {
         mCornerRadio = cornerRadio;
+        return this;
     }
 
 
     public ISlidingTabStrip getTabStrip() {
         return mTabStrip;
+    }
+
+
+    public int getPromptBgColor() {
+        return mPromptBgColor;
+    }
+
+
+    public void setPromptBgColor(int promptBgColor) {
+        mPromptBgColor = promptBgColor;
+    }
+
+
+    public int getPromptNumColor() {
+        return mPromptNumColor;
+    }
+
+
+
+    public void setPromptNumColor(int promptNumColor) {
+        mPromptNumColor = promptNumColor;
     }
 }

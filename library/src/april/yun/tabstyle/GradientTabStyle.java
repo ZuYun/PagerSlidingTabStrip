@@ -14,8 +14,8 @@ import april.yun.ISlidingTabStrip;
  * @author yun.
  * @date 2017/4/22
  * @des [一句话描述]
- * @since [https://github.com/mychoices]
- * <p><a href="https://github.com/mychoices">github</a>
+ * @since [https://github.com/ZuYun]
+ * <p><a href="https://github.com/ZuYun">github</a>
  */
 public class GradientTabStyle extends JTabStyle {
 
@@ -42,6 +42,7 @@ public class GradientTabStyle extends JTabStyle {
 
 
     @Override public void afterSetViewPager(LinearLayout tabsContainer) {
+        super.afterSetViewPager(tabsContainer);
         rectPaint.setStyle(Paint.Style.STROKE);
         rectPaint.setColor(mTabStyleDelegate.getFrameColor());
         mNormalColor = Color.TRANSPARENT;
@@ -59,16 +60,7 @@ public class GradientTabStyle extends JTabStyle {
         mLastTab = mTabStrip.getTabsContainer().getChildAt(mTabCounts - 1);
     }
 
-
-    @Override
-    protected void calcuteIndicatorLinePosition(ViewGroup tabsContainer, float currentPositionOffset, int lastCheckedPosition) {
-        //Log.d(TAG, "calcuteIndicatorLinePosition do nothing");
-
-    }
-
-
     private float currentAlpha = 1;
-
 
     @Override
     public void onDraw(Canvas canvas, ViewGroup tabsContainer, float currentPositionOffset, int lastCheckedPosition) {

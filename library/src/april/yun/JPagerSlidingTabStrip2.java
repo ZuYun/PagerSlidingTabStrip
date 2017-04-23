@@ -108,13 +108,8 @@ public class JPagerSlidingTabStrip2 extends LinearLayout implements ISlidingTabS
         //tabsContainer.
         removeAllViews();
         mTabCount = pager.getAdapter().getCount();
-        if (!mJTabStyle.needChildView()) {
-            removeAllViews();
-        }
-        else {
-
+        if (mJTabStyle.needChildView()) {
             for (int i = 0; i < mTabCount; i++) {
-
                 if (pager.getAdapter() instanceof IconTabProvider) {
                     if (((IconTabProvider) pager.getAdapter()).getPageIconResIds(i) != null) {
                         addIconTab(i, pager.getAdapter().getPageTitle(i).toString(),
@@ -147,6 +142,8 @@ public class JPagerSlidingTabStrip2 extends LinearLayout implements ISlidingTabS
             return;
         }
         PromptView tab = new PromptView(getContext());
+        tab.setColor_bg(mTabStyleDelegate.getPromptBgColor());
+        tab.setColor_num(mTabStyleDelegate.getPromptNumColor());
         if (!mTabStyleDelegate.isNotDrawIcon() && resId.length > 0) {
             if (mTabStyleDelegate.getTabIconGravity() == Gravity.NO_GRAVITY) {
                 if (resId.length > 1) {
@@ -241,15 +238,17 @@ public class JPagerSlidingTabStrip2 extends LinearLayout implements ISlidingTabS
 
     @Override protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mJTabStyle.onSizeChanged(w, h, oldw, oldh);
+        if (!mJTabStyle.needChildView() || getChildCount() > 0) {
+            mJTabStyle.onSizeChanged(w, h, oldw, oldh);
+        }
     }
 
 
     @Override protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        //        if (isInEditMode() || mTabCount == 0 || mTabMode != MODE_TOP) {
-        if (isInEditMode() || mTabCount == 0) {
+        if (mJTabStyle.needChildView()  && getChildCount() == 0 || isInEditMode() ||
+                mTabCount == 0) {
             return;
         }
 
