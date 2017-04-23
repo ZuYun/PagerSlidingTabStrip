@@ -96,7 +96,7 @@ public class RoundTabStyle extends JTabStyle {
 
             rectPaint.setStyle(Paint.Style.FILL);
             //draw indicator
-            canvas.drawRect(mLinePosition.x, mH - mTabStyleDelegate.getIndicatorHeight(), mLinePosition.y, mH,
+            canvas.drawRect(mLinePosition.x, 0, mLinePosition.y, mH,
                     rectPaint);
         }
 

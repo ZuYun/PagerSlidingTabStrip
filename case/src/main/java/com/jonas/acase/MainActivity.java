@@ -65,9 +65,10 @@ public class MainActivity extends FragmentActivity {
                    .setDividerColor(Color.TRANSPARENT);
         tabs_up.getTabStyleDelegate().setNotDrawIcon(true);
         tabs_up1.getTabStyleDelegate().setNotDrawIcon(true);
-        tabs_up1.getTabStyleDelegate().getJTabStyle().moveStyle=MOVESTYLE_DEFAULT;
+        tabs_up1.getTabStyleDelegate().getJTabStyle().moveStyle = MOVESTYLE_DEFAULT;
 
-        tabs_up2.getTabStyleDelegate().setNotDrawIcon(true)
+        tabs_up2.getTabStyleDelegate()
+                .setNotDrawIcon(true)
                 .setFrameColor(Color.TRANSPARENT)
                 .setDividerColor(Color.TRANSPARENT)
                 .setIndicatorHeight(5);
@@ -109,13 +110,15 @@ public class MainActivity extends FragmentActivity {
         tabs_up.setViewPager(pager);
         tabs_up1.setViewPager(pager);
         tabs_up2.setViewPager(pager);
-        tabs_up2.setPromptNum(1,9).setPromptNum(0,10)
-                                   .setPromptNum(2,-9).setPromptNum(3,100);
+        tabs_up2.setPromptNum(1, 9).setPromptNum(0, 10).setPromptNum(2, -9).setPromptNum(3, 100);
         tabs_up3.setViewPager(pager);
-        tabs_up3.setPromptNum(2,18);
+        tabs_up3.setPromptNum(2, 18);
         tabs_buttom.setViewPager(pager);
-        tabs_buttom.setPromptNum(1,9).setPromptNum(0,10)
-                   .setPromptNum(2,-9).setPromptNum(3,100);
+        tabs_buttom.setPromptNum(1, 9).setPromptNum(0, 10).setPromptNum(2, -9).setPromptNum(3, 100);
+        tabs_up1.setPromptNum(1, 9).setPromptNum(0, 10).setPromptNum(2, -9).setPromptNum(3, 100);
+        //tabs_up.setPromptNum(1, 9).setPromptNum(0, 10).setPromptNum(2, -9).setPromptNum(3, 100);
+        tabs_up3.setPromptNum(1, 9).setPromptNum(0, 10).setPromptNum(2, -9).setPromptNum(3, 100);
+
         dots.setViewPager(pager);
     }
 

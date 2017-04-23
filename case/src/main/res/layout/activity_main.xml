@@ -20,10 +20,8 @@
     <april.yun.JPagerSlidingTabStrip
         android:layout_margin="10dp"
         android:id="@+id/tabs_2"
-        android:background="#5057365D"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:minHeight="40dp"/>
+        android:layout_height="40dp"
+        android:layout_width="match_parent"/>
     <april.yun.JPagerSlidingTabStrip
         android:layout_margin="10dp"
         android:id="@+id/tabs_3"

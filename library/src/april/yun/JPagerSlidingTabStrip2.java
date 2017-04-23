@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
-import android.os.Build;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Size;
@@ -148,8 +147,8 @@ public class JPagerSlidingTabStrip2 extends LinearLayout implements ISlidingTabS
             return;
         }
         PromptView tab = new PromptView(getContext());
-        tab.setTextAlignment(TEXT_ALIGNMENT_GRAVITY);
-        tab.setGravity(Gravity.CENTER);
+        //tab.setTextAlignment(TEXT_ALIGNMENT_GRAVITY);
+        //tab.setGravity(Gravity.CENTER);
         if (!mTabStyleDelegate.isNotDrawIcon() && resId.length > 0) {
             if (mTabStyleDelegate.getTabIconGravity() == Gravity.NO_GRAVITY) {
                 if (resId.length > 1) {
@@ -174,10 +173,10 @@ public class JPagerSlidingTabStrip2 extends LinearLayout implements ISlidingTabS
                     case Gravity.BOTTOM:
                         tab.setCompoundDrawablesWithIntrinsicBounds(null, null, null, tabIcon);
                         break;
-                    case Gravity.LEFT:
+                    case Gravity.START:
                         tab.setCompoundDrawablesWithIntrinsicBounds(tabIcon, null, null, null);
                         break;
-                    case Gravity.RIGHT:
+                    case Gravity.END:
                         tab.setCompoundDrawablesWithIntrinsicBounds(null, null, tabIcon, null);
                         break;
                     default:
@@ -235,12 +234,7 @@ public class JPagerSlidingTabStrip2 extends LinearLayout implements ISlidingTabS
                 // setAllCaps() is only available from API 14, so the upper case is made manually if we are on a
                 // pre-ICS-build
                 if (mTabStyleDelegate.isTextAllCaps()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                        tab.setAllCaps(true);
-                    }
-                    else {
-                        tab.setText(tab.getText().toString().toUpperCase(locale));
-                    }
+                    tab.setAllCaps(true);
                 }
             }
         }

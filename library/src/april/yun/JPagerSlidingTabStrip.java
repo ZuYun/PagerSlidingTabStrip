@@ -47,7 +47,7 @@ public class JPagerSlidingTabStrip extends HorizontalScrollView implements ISlid
     private int mLastCheckedPosition = -1;
     private int mState = -1;
 
-    private ViewGroup.LayoutParams defaultTabLayoutParams;
+    private LinearLayout.LayoutParams defaultTabLayoutParams;
     private LinearLayout.LayoutParams expandedTabLayoutParams;
 
     private final PageListener pageListener = new PageListener();
@@ -86,6 +86,8 @@ public class JPagerSlidingTabStrip extends HorizontalScrollView implements ISlid
         defaultTabLayoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.MATCH_PARENT);
         expandedTabLayoutParams = new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1.0f);
+        //expandedTabLayoutParams.gravity=Gravity.CENTER_VERTICAL;
+        //defaultTabLayoutParams.gravity=Gravity.CENTER_VERTICAL;
         if (locale == null) {
             locale = getResources().getConfiguration().locale;
         }
@@ -153,9 +155,6 @@ public class JPagerSlidingTabStrip extends HorizontalScrollView implements ISlid
             return;
         }
         PromptView tab = new PromptView(getContext());
-        tab.setTextAlignment(TEXT_ALIGNMENT_GRAVITY);
-        tab.setSingleLine();
-        tab.setGravity(Gravity.CENTER);
         if (!mTabStyleDelegate.isNotDrawIcon()) {
             if (mTabStyleDelegate.getTabIconGravity() == Gravity.NO_GRAVITY) {
                 if (resId.length > 1) {
@@ -273,7 +272,6 @@ public class JPagerSlidingTabStrip extends HorizontalScrollView implements ISlid
     @Override protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        //        if (isInEditMode() || mTabCount == 0 || mTabMode != MODE_TOP) {
         if (isInEditMode() || mTabCount == 0) {
             return;
         }

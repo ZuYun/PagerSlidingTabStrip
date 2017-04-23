@@ -63,8 +63,10 @@ public class PromptView extends CheckedTextView {
 
     public PromptView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setTextAlignment(TEXT_ALIGNMENT_GRAVITY);
+        //setTextAlignment(TEXT_ALIGNMENT_GRAVITY);
         setGravity(Gravity.CENTER);
+        setIncludeFontPadding(false);//去除顶部和底部额外空白
+        //setSingleLine();//must not be singleLine
         mNumPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mNumPaint.setTextAlign(Paint.Align.CENTER);
         mBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -103,17 +105,31 @@ public class PromptView extends CheckedTextView {
     private void refreshNotifyBg() {
         int textWidth = getTextWidth(getPaint(), getText().toString());
         int msgWidth = getTextWidth(mNumPaint, msg_str);
-
-        float msgPading = mNumHeight / 2;
-        float halfMsgBgW = msgWidth / 2 + msgPading;
+        float promptOffset = mNumHeight / 2;
+        float halfMsgBgW = msgWidth / 2 + promptOffset;
         halfMsgBgW = halfMsgBgW > mNumHeight ? halfMsgBgW : mNumHeight;
 
-        //textWidth的宽度不小于3个字的宽度
-        textWidth = getText().length() < 3 ? textWidth / getText().length() * 3 : textWidth;
-
-        mPromptCenterPoint = new PointF(mHalfW + textWidth / 2 - mNumHeight / 2, mNumHeight);
+        if (!TextUtils.isEmpty(getText())) {
+            //textWidth的宽度不小于3个字的宽度
+            textWidth = getText().length() < 3 ? textWidth / getText().length() * 3 : textWidth;
+        }
+        else {
+            textWidth = (int) (mHalfW * 2);
+        }
+        //compoundDrawables size allways 4
+        Drawable[] compoundDrawables = getCompoundDrawables();
+        if (!haveCompoundDrawable(compoundDrawables)) {
+            promptOffset = -promptOffset / 3;
+        }
+        mPromptCenterPoint = new PointF(mHalfW + textWidth / 2 - promptOffset, mNumHeight);
         mMsgBg = new RectF(mPromptCenterPoint.x - halfMsgBgW, 0, mPromptCenterPoint.x + halfMsgBgW,
                 mPromptCenterPoint.y + mNumHeight);
+        //防止画到屏幕外
+        if (mMsgBg.right > 2 * mHalfW) {
+            //顺序不可变 因为mPromptCenterPoint依赖mMsgBg
+            mPromptCenterPoint.offset(2 * mHalfW - mMsgBg.right, 0);
+            mMsgBg.offset(2 * mHalfW - mMsgBg.right, 0);
+        }
     }
 
 
